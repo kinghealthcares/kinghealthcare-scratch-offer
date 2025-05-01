@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>King Healthcare Scratch Offer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      text-align: center;
+    }
+    .container {
+      position: relative;
+      max-width: 400px;
+      margin: 50px auto;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #offer-img {
+      width: 100%;
+      border-radius: 12px;
+      display: none;
+    }
+    #popup {
+      display: none;
+      background: #fff;
+      color: #000;
+      padding: 20px;
+      border-radius: 8px;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px #fff;
+    }
+    #popup button {
+      padding: 10px 20px;
+      background: green;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎉 स्क्रैच करके ऑफर देखें 🎉</h2>
+  <div class="container">
+    <img id="offer-img" src="A_promotional_congratulatory_digital_graphic_desig.png" alt="Offer Image"/>
+    <canvas id="scratch" width="400" height="300"></canvas>
+  </div>
+  <div id="popup">
+    <p>टेक्नीशियन से संपर्क करने के लिए नीचे क्लिक करें:</p>
+    <button onclick="saveContact()">Save Contact & WhatsApp</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('scratch');
+    const ctx = canvas.getContext('2d');
+    const offerImg = document.getElementById('offer-img');
+    const popup = document.getElementById('popup');
+
+    let isDrawing = false;
+
+    function drawDot(x, y) {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      drawDot(e.offsetX, e.offsetY);
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDrawing) {
+        drawDot(e.offsetX, e.offsetY);
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      isDrawing = false;
+      checkReveal();
+    });
+
+    function checkReveal() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let cleared = 0;
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        if (imageData.data[i + 3] === 0) {
+          cleared++;
+        }
+      }
+      if (cleared / (canvas.width * canvas.height) > 0.4) {
+        canvas.style.display = 'none';
+        offerImg.style.display = 'block';
+        setTimeout(() => {
+          popup.style.display = 'block';
+        }, 500);
+      }
+    }
+
+    function saveContact() {
+      const vCardData = `BEGIN:VCARD
+VERSION:3.0
+FN:King Healthcare Technician
+TEL;TYPE=CELL:6306215287
+EMAIL:kinghealthcare.ltd@gmail.com
+END:VCARD`;
+
+      const blob = new Blob([vCardData], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'king_technician.vcf';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("Dear Customer,\n\nThank you for scanning the scratch coupon!\n\n👨‍⚕️ Technician Jeet Kushwaha is on the way to collect your sample.\n📞 Mobile: 6306215287\n\n- King Healthcare Pathology Lab"), '_blank');
+      }, 1000);
+    }
+
+    window.onload = () => {
+      ctx.fillStyle = '#999';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    };
+  </script>
+</body>
+</html>
