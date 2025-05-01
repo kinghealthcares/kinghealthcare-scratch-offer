@@ -53,13 +53,12 @@
 <body>
   <h2>🎉 स्क्रैच करके ऑफर देखें 🎉</h2>
   <div class="container">
-    <img id="<img id="offer-img" src="https://via.placeholder.com/400x300.png?text=🎉+Congratulations+🎉" alt="Offer Image"/>
-" src="A_promotional_congratulatory_digital_graphic_desig.png" alt="Offer Image"/>
+    <img id="offer-img" src="offer-image-resized.png" alt="Offer Image"/>
     <canvas id="scratch" width="400" height="300"></canvas>
   </div>
   <div id="popup">
     <p>टेक्नीशियन से संपर्क करने के लिए नीचे क्लिक करें:</p>
-    <button onclick="saveContact()">Save Contact & WhatsApp</button>
+    <button onclick="saveContact()">सेव करें और WhatsApp पर बात करें</button>
   </div>
 
   <script>
@@ -70,6 +69,14 @@
 
     let isDrawing = false;
 
+    function getTouchPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top
+      };
+    }
+
     function drawDot(x, y) {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
@@ -77,16 +84,13 @@
       ctx.fill();
     }
 
-    // Mouse Events
     canvas.addEventListener('mousedown', (e) => {
       isDrawing = true;
       drawDot(e.offsetX, e.offsetY);
     });
 
     canvas.addEventListener('mousemove', (e) => {
-      if (isDrawing) {
-        drawDot(e.offsetX, e.offsetY);
-      }
+      if (isDrawing) drawDot(e.offsetX, e.offsetY);
     });
 
     canvas.addEventListener('mouseup', () => {
@@ -94,25 +98,17 @@
       checkReveal();
     });
 
-    // Touch Events (for mobile)
     canvas.addEventListener('touchstart', (e) => {
-      e.preventDefault();
       isDrawing = true;
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-      drawDot(x, y);
+      const pos = getTouchPos(e);
+      drawDot(pos.x, pos.y);
     });
 
     canvas.addEventListener('touchmove', (e) => {
       e.preventDefault();
       if (isDrawing) {
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        drawDot(x, y);
+        const pos = getTouchPos(e);
+        drawDot(pos.x, pos.y);
       }
     });
 
@@ -154,14 +150,7 @@ END:VCARD`;
       document.body.appendChild(a);
       a.click();
       setTimeout(() => {
-        window.open("https://wa.me/916306215287?text=" + encodeURIComponent(`Dear Customer,
-
-Thank you for scanning the scratch coupon!
-
-👨‍⚕️ Technician Jeet Kushwaha is on the way to collect your sample.
-📞 Mobile: 6306215287
-
-- King Healthcare Pathology Lab`), '_blank');
+        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("नमस्ते,\nमैंने स्क्रैच कूपन स्कैन किया है। कृपया मेरा सैंपल कलेक्शन करें।\nधन्यवाद!\n- ग्राहक"), '_blank');
       }, 1000);
     }
 
