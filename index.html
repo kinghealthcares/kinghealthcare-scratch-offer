@@ -3,54 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>King Healthcare Scratch Offer</title>
+  <title>🎁 King Healthcare Scratch Offer 🎁</title>
   <style>
     body {
       margin: 0;
-      background: #1a1a1a;
       font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #000428, #004e92);
       color: #fff;
       text-align: center;
+      padding: 20px;
     }
     h2 {
       margin-top: 20px;
-      font-size: 26px;
-      color: gold;
+      font-size: 24px;
     }
     .container {
       position: relative;
       width: 90%;
       max-width: 400px;
-      margin: 30px auto;
-    }
-    #scratchCanvas {
-      width: 100%;
+      margin: 40px auto;
       border-radius: 12px;
-      background: #c0c0c0;
-      display: block;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      overflow: hidden;
     }
     #offer-img {
       width: 100%;
-      border-radius: 12px;
       display: none;
+      border-radius: 12px;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
     }
     #popup {
       display: none;
+      background: #fff;
+      color: #000;
+      padding: 25px;
+      border-radius: 12px;
       position: fixed;
       top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: #fff;
-      color: #000;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.5);
-      z-index: 100;
+      box-shadow: 0 0 25px #fff;
+      z-index: 5;
     }
     #popup button {
-      padding: 12px 20px;
-      background: green;
-      color: white;
+      padding: 10px 20px;
+      background: #28a745;
+      color: #fff;
       border: none;
       border-radius: 8px;
       font-size: 16px;
@@ -60,78 +63,40 @@
   </style>
 </head>
 <body>
-  <h2>🎁 स्क्रैच करें और अपना गिफ्ट पाएं 🎁</h2>
+  <h2>🎉 स्क्रैच कीजिए और मैजिक गिफ्ट पाइए! 🎁</h2>
 
   <div class="container">
-    <img id="offer-img" src="magic-gift.png.png" alt="Gift Offer">
-    <canvas id="scratchCanvas" width="400" height="300"></canvas>
+    <img id="offer-img" src="magic-gift.png" alt="Gift Offer" />
+    <canvas id="scratch" width="400" height="300"></canvas>
   </div>
 
   <div id="popup">
-    <h3>🎉 बधाई हो! आपने Free Home Sample Collection जीत लिया है!</h3>
-    <button onclick="saveContact()">सेव करें और WhatsApp पर जाएं</button>
+    <h3>🎊 बधाई हो! 🎊</h3>
+    <p>आपने Free Home Sample Collection जीत लिया है!</p>
+    <button onclick="saveContact()">सेव करें और WhatsApp करें</button>
   </div>
 
   <script>
-    const canvas = document.getElementById('scratchCanvas');
+    const canvas = document.getElementById('scratch');
     const ctx = canvas.getContext('2d');
     const offerImg = document.getElementById('offer-img');
     const popup = document.getElementById('popup');
-
-    // Load background image
-    const img = new Image();
-    img.src = 'magic-gift.png';
-    img.onload = () => {
-      offerImg.style.display = 'none';
-      ctx.fillStyle = '#c0c0c0';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    };
-
     let isDrawing = false;
 
-    function getPosition(e) {
-      const rect = canvas.getBoundingClientRect();
-      let x, y;
-      if (e.touches) {
-        x = e.touches[0].clientX - rect.left;
-        y = e.touches[0].clientY - rect.top;
-      } else {
-        x = e.offsetX;
-        y = e.offsetY;
-      }
-      return { x, y };
-    }
-
-    function erase(x, y) {
+    function drawDot(x, y) {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
-      ctx.arc(x, y, 20, 0, 2 * Math.PI);
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    function checkReveal() {
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let cleared = 0;
-      for (let i = 3; i < imageData.data.length; i += 4) {
-        if (imageData.data[i] === 0) cleared++;
-      }
-      if (cleared / (canvas.width * canvas.height) > 0.4) {
-        canvas.style.display = 'none';
-        offerImg.style.display = 'block';
-        popup.style.display = 'block';
-      }
-    }
-
-    canvas.addEventListener('mousedown', e => {
+    canvas.addEventListener('mousedown', (e) => {
       isDrawing = true;
-      const pos = getPosition(e);
-      erase(pos.x, pos.y);
+      drawDot(e.offsetX, e.offsetY);
     });
 
-    canvas.addEventListener('mousemove', e => {
-      if (!isDrawing) return;
-      const pos = getPosition(e);
-      erase(pos.x, pos.y);
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDrawing) drawDot(e.offsetX, e.offsetY);
     });
 
     canvas.addEventListener('mouseup', () => {
@@ -139,17 +104,20 @@
       checkReveal();
     });
 
-    canvas.addEventListener('touchstart', e => {
+    canvas.addEventListener('touchstart', (e) => {
       isDrawing = true;
-      const pos = getPosition(e);
-      erase(pos.x, pos.y);
+      const rect = canvas.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const y = e.touches[0].clientY - rect.top;
+      drawDot(x, y);
     });
 
-    canvas.addEventListener('touchmove', e => {
-      if (!isDrawing) return;
+    canvas.addEventListener('touchmove', (e) => {
       e.preventDefault();
-      const pos = getPosition(e);
-      erase(pos.x, pos.y);
+      const rect = canvas.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const y = e.touches[0].clientY - rect.top;
+      if (isDrawing) drawDot(x, y);
     });
 
     canvas.addEventListener('touchend', () => {
@@ -157,19 +125,41 @@
       checkReveal();
     });
 
+    function checkReveal() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let cleared = 0;
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        if (imageData.data[i + 3] === 0) cleared++;
+      }
+      const percent = cleared / (canvas.width * canvas.height);
+      if (percent > 0.4) {
+        canvas.style.display = 'none';
+        offerImg.style.display = 'block';
+        setTimeout(() => {
+          popup.style.display = 'block';
+        }, 600);
+      }
+    }
+
     function saveContact() {
-      const vCard = `BEGIN:VCARD\nVERSION:3.0\nFN:Pathology King Health Cares\nTEL;TYPE=CELL:6306215287\nEMAIL:kinghealthcare.ltd@gmail.com\nEND:VCARD`;
+      const vCard = `BEGIN:VCARD\nVERSION:3.0\nFN:Pathology King Health Cares\nTEL:6306215287\nEMAIL:kinghealthcare.ltd@gmail.com\nEND:VCARD`;
       const blob = new Blob([vCard], { type: 'text/vcard' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'KingHealthCares.vcf';
+      a.download = 'king_health_contact.vcf';
+      document.body.appendChild(a);
       a.click();
 
       setTimeout(() => {
-        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("नमस्ते, मैंने स्क्रैच कूपन स्कैन किया है। कृपया मेरा सैंपल कलेक्शन करें। धन्यवाद!"), '_blank');
+        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("नमस्ते,\nमैंने स्क्रैच कूपन खोला है। कृपया मेरा सैंपल कलेक्शन करें।\n- ग्राहक"), '_blank');
       }, 1000);
     }
+
+    window.onload = () => {
+      ctx.fillStyle = "#CCCCCC";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    };
   </script>
 </body>
 </html>
