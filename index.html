@@ -8,38 +8,39 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #000000, #2c3e50);
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       color: #fff;
       text-align: center;
+    }
+    h2 {
+      padding: 20px;
+      font-size: 24px;
+      background: linear-gradient(to right, #ffcc00, #ff0066);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .container {
       position: relative;
       max-width: 400px;
-      margin: 50px auto;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
+      margin: 30px auto;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
       overflow: hidden;
     }
     canvas {
       position: absolute;
       top: 0;
       left: 0;
-      border-radius: 12px;
+      border-radius: 16px;
     }
     #offer-img {
       width: 100%;
+      border-radius: 16px;
       display: none;
-      border-radius: 12px;
-    }
-    h2 {
-      font-size: 24px;
-      margin-top: 30px;
-      color: #f1c40f;
-      text-shadow: 1px 1px 3px #000;
     }
     #popup {
       display: none;
-      background: #ffffff;
+      background: #fff;
       color: #000;
       padding: 20px;
       border-radius: 12px;
@@ -47,36 +48,30 @@
       top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
-      box-shadow: 0 0 20px #00ffcc;
-      z-index: 10;
-      width: 80%;
-      max-width: 320px;
-    }
-    #popup p {
-      margin-bottom: 10px;
-      font-size: 16px;
+      box-shadow: 0 0 20px #fff;
+      z-index: 999;
     }
     #popup button {
-      padding: 12px 20px;
-      background: #27ae60;
-      color: #fff;
+      padding: 12px 24px;
+      background: #28a745;
+      color: white;
       border: none;
       border-radius: 8px;
-      cursor: pointer;
       font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h2>🎉 स्क्रैच करें और अपना गिफ्ट पाएं 🎁</h2>
+  <h2>🎁 स्क्रैच करें और गिफ्ट पाएं 🎁</h2>
   <div class="container">
-    <img id="offer-img" src="jeeet.png" alt="Offer Image" />
+    <img id="offer-img" src="images/magic-gift.png" alt="Offer Image"/>
     <canvas id="scratch" width="400" height="300"></canvas>
   </div>
-
   <div id="popup">
-    <p>🎉 बधाई हो! आपने जीता: <strong>Free Home Sample Collection</strong> 🏠🧪</p>
-    <button onclick="saveContact()">सेव करें और WhatsApp करें</button>
+    <h3>🎉 बधाई हो! आपने Free Home Sample Collection जीता है!</h3>
+    <p>संपर्क सेव करें और WhatsApp पर बात शुरू करें:</p>
+    <button onclick="saveContact()">सेव करें और WhatsApp पर जाएं</button>
   </div>
 
   <script>
@@ -98,7 +93,7 @@
     function drawDot(x, y) {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.arc(x, y, 25, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -143,39 +138,32 @@
           cleared++;
         }
       }
-      if (cleared / (canvas.width * canvas.height) > 0.4) {
+      if (cleared / (canvas.width * canvas.height) > 0.35) {
         canvas.style.display = 'none';
         offerImg.style.display = 'block';
         setTimeout(() => {
           popup.style.display = 'block';
-        }, 500);
+        }, 600);
       }
     }
 
     function saveContact() {
       const vCardData = `BEGIN:VCARD\nVERSION:3.0\nFN:Pathology King Health Cares\nTEL;TYPE=CELL:6306215287\nEMAIL:kinghealthcare.ltd@gmail.com\nEND:VCARD`;
-
       const blob = new Blob([vCardData], { type: 'text/vcard' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'king_technician.vcf';
+      a.download = 'KingHealthContact.vcf';
       document.body.appendChild(a);
       a.click();
-
       setTimeout(() => {
-        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("नमस्ते,\nमैंने स्क्रैच ऑफर देखा है। कृपया मेरा सैंपल कलेक्शन करें।\nधन्यवाद!"), '_blank');
+        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("नमस्ते, मैंने स्क्रैच कूपन स्कैन किया है। कृपया मेरा सैंपल कलेक्शन करें। धन्यवाद!"), '_blank');
       }, 1000);
     }
 
-    // Load grey scratch area
     window.onload = () => {
-      ctx.fillStyle = '#cccccc'; // light grey scratch area
+      ctx.fillStyle = '#999';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = '#555';
-      ctx.font = '20px sans-serif';
-      ctx.fillText('🎁 यहां स्क्रैच करें 🎁', 100, 150);
     };
   </script>
 </body>
