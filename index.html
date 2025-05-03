@@ -3,32 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎁 King Healthcare Scratch Offer 🎁</title>
+  <title>King Healthcare Scratch Offer</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #000428, #004e92);
+      background: linear-gradient(135deg, #1a1a1a, #333);
       color: #fff;
       text-align: center;
-      padding: 20px;
-    }
-    h2 {
-      margin-top: 20px;
-      font-size: 24px;
     }
     .container {
       position: relative;
-      width: 90%;
       max-width: 400px;
-      margin: 40px auto;
+      margin: 50px auto;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
       overflow: hidden;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
     }
     #offer-img {
       width: 100%;
-      display: none;
+      display: block;
       border-radius: 12px;
     }
     canvas {
@@ -41,39 +35,52 @@
       display: none;
       background: #fff;
       color: #000;
-      padding: 25px;
-      border-radius: 12px;
+      padding: 20px;
+      border-radius: 10px;
       position: fixed;
-      top: 30%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      box-shadow: 0 0 25px #fff;
-      z-index: 5;
+      box-shadow: 0 0 20px #00ff88;
+      z-index: 999;
+    }
+    #popup h2 {
+      margin-top: 0;
+      color: #28a745;
     }
     #popup button {
-      padding: 10px 20px;
+      padding: 12px 25px;
       background: #28a745;
       color: #fff;
+      font-size: 16px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 15px;
+    }
+    h2.title {
+      margin-top: 30px;
+      font-size: 24px;
+      color: #00ffcc;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { color: #00ffcc; }
+      50% { color: #ffcc00; }
+      100% { color: #00ffcc; }
     }
   </style>
 </head>
 <body>
-  <h2>🎉 स्क्रैच कीजिए और मैजिक गिफ्ट पाइए! 🎁</h2>
-
+  <h2 class="title">🎁 स्क्रैच कीजिए और अपना गिफ्ट पाइए 🎁</h2>
   <div class="container">
-    <img id="offer-img" src="magic-gift.png" alt="Gift Offer" />
+    <img id="offer-img" src="magic-gift.png" alt="Magic Gift"/>
     <canvas id="scratch" width="400" height="300"></canvas>
   </div>
-
   <div id="popup">
-    <h3>🎊 बधाई हो! 🎊</h3>
-    <p>आपने Free Home Sample Collection जीत लिया है!</p>
-    <button onclick="saveContact()">सेव करें और WhatsApp करें</button>
+    <h2>🎉 बधाई हो!</h2>
+    <p>आपने जीता है <strong>FREE Home Sample Collection</strong>!</p>
+    <button onclick="saveContact()">सेव करें और WhatsApp पर बात करें</button>
   </div>
 
   <script>
@@ -83,82 +90,88 @@
     const popup = document.getElementById('popup');
     let isDrawing = false;
 
-    function drawDot(x, y) {
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left,
+        y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
+      };
+    }
+
+    function draw(x, y) {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
       ctx.arc(x, y, 20, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    canvas.addEventListener('mousedown', (e) => {
-      isDrawing = true;
-      drawDot(e.offsetX, e.offsetY);
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-      if (isDrawing) drawDot(e.offsetX, e.offsetY);
-    });
-
-    canvas.addEventListener('mouseup', () => {
-      isDrawing = false;
-      checkReveal();
-    });
-
-    canvas.addEventListener('touchstart', (e) => {
-      isDrawing = true;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.touches[0].clientX - rect.left;
-      const y = e.touches[0].clientY - rect.top;
-      drawDot(x, y);
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const x = e.touches[0].clientX - rect.left;
-      const y = e.touches[0].clientY - rect.top;
-      if (isDrawing) drawDot(x, y);
-    });
-
-    canvas.addEventListener('touchend', () => {
-      isDrawing = false;
-      checkReveal();
-    });
-
     function checkReveal() {
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let cleared = 0;
-      for (let i = 0; i < imageData.data.length; i += 4) {
-        if (imageData.data[i + 3] === 0) cleared++;
+      for (let i = 3; i < imageData.data.length; i += 4) {
+        if (imageData.data[i] === 0) cleared++;
       }
-      const percent = cleared / (canvas.width * canvas.height);
-      if (percent > 0.4) {
+      const percent = cleared / (canvas.width * canvas.height) * 100;
+      if (percent > 40) {
         canvas.style.display = 'none';
-        offerImg.style.display = 'block';
-        setTimeout(() => {
-          popup.style.display = 'block';
-        }, 600);
+        setTimeout(() => popup.style.display = 'block', 500);
       }
     }
 
     function saveContact() {
-      const vCard = `BEGIN:VCARD\nVERSION:3.0\nFN:Pathology King Health Cares\nTEL:6306215287\nEMAIL:kinghealthcare.ltd@gmail.com\nEND:VCARD`;
-      const blob = new Blob([vCard], { type: 'text/vcard' });
+      const vCardData = `BEGIN:VCARD\nVERSION:3.0\nFN:Pathology King Health Cares\nTEL;TYPE=CELL:6306215287\nEMAIL:kinghealthcare.ltd@gmail.com\nEND:VCARD`;
+      const blob = new Blob([vCardData], { type: 'text/vcard' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'king_health_contact.vcf';
+      a.download = 'kinghealthcare.vcf';
       document.body.appendChild(a);
       a.click();
-
       setTimeout(() => {
-        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("नमस्ते,\nमैंने स्क्रैच कूपन खोला है। कृपया मेरा सैंपल कलेक्शन करें।\n- ग्राहक"), '_blank');
+        window.open("https://wa.me/916306215287?text=" + encodeURIComponent("नमस्ते,\nमैंने स्क्रैच कूपन स्कैन किया है। कृपया मेरा सैंपल कलेक्शन करें।\nधन्यवाद!"), '_blank');
       }, 1000);
     }
 
     window.onload = () => {
-      ctx.fillStyle = "#CCCCCC";
+      ctx.fillStyle = '#bbbbbb';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        const pos = getPos(e);
+        draw(pos.x, pos.y);
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        if (isDrawing) {
+          const pos = getPos(e);
+          draw(pos.x, pos.y);
+        }
+      });
+
+      canvas.addEventListener('mouseup', () => {
+        isDrawing = false;
+        checkReveal();
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        isDrawing = true;
+        const pos = getPos(e);
+        draw(pos.x, pos.y);
+      });
+
+      canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (isDrawing) {
+          const pos = getPos(e);
+          draw(pos.x, pos.y);
+        }
+      });
+
+      canvas.addEventListener('touchend', () => {
+        isDrawing = false;
+        checkReveal();
+      });
     };
   </script>
 </body>
