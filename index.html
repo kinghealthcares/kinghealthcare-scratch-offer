@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>King Healthcare Scratch Offer</title>
   <style>
     body {
       margin: 0;
-      background: linear-gradient(120deg, #1e1e2f, #2c3e50);
+      background: #1a1a1a;
       font-family: 'Segoe UI', sans-serif;
-      color: white;
+      color: #fff;
       text-align: center;
     }
     h2 {
       margin-top: 20px;
-      font-size: 24px;
-      background: linear-gradient(to right, #ffd700, #ff69b4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 26px;
+      color: gold;
     }
     .container {
       position: relative;
@@ -25,16 +23,16 @@
       max-width: 400px;
       margin: 30px auto;
     }
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
+    #scratchCanvas {
+      width: 100%;
       border-radius: 12px;
+      background: #c0c0c0;
+      display: block;
     }
     #offer-img {
       width: 100%;
-      display: block;
       border-radius: 12px;
+      display: none;
     }
     #popup {
       display: none;
@@ -42,12 +40,12 @@
       top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: white;
-      color: black;
+      background: #fff;
+      color: #000;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-      z-index: 10;
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+      z-index: 100;
     }
     #popup button {
       padding: 12px 20px;
@@ -57,16 +55,16 @@
       border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 15px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h2>🎁 स्क्रैच करें और गिफ्ट पाएं 🎁</h2>
+  <h2>🎁 स्क्रैच करें और अपना गिफ्ट पाएं 🎁</h2>
 
   <div class="container">
-    <img id="offer-img" src="magic-gift.png.png" alt="Offer Image">
-    <canvas id="scratch" width="400" height="300"></canvas>
+    <img id="offer-img" src="magic-gift.png" alt="Gift Offer">
+    <canvas id="scratchCanvas" width="400" height="300"></canvas>
   </div>
 
   <div id="popup">
@@ -75,87 +73,88 @@
   </div>
 
   <script>
-    const canvas = document.getElementById("scratch");
-    const ctx = canvas.getContext("2d");
-    const offerImg = document.getElementById("offer-img");
-    const popup = document.getElementById("popup");
+    const canvas = document.getElementById('scratchCanvas');
+    const ctx = canvas.getContext('2d');
+    const offerImg = document.getElementById('offer-img');
+    const popup = document.getElementById('popup');
 
-    offerImg.onload = () => {
-      ctx.fillStyle = "#aaa";
+    // Load background image
+    const img = new Image();
+    img.src = 'magic-gift.png';
+    img.onload = () => {
+      offerImg.style.display = 'none';
+      ctx.fillStyle = '#c0c0c0';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
     let isDrawing = false;
 
-    function getPos(e) {
+    function getPosition(e) {
       const rect = canvas.getBoundingClientRect();
+      let x, y;
       if (e.touches) {
-        return {
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top
-        };
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
       } else {
-        return {
-          x: e.offsetX,
-          y: e.offsetY
-        };
+        x = e.offsetX;
+        y = e.offsetY;
       }
+      return { x, y };
     }
 
-    function draw(x, y) {
-      ctx.globalCompositeOperation = "destination-out";
+    function erase(x, y) {
+      ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
-      ctx.arc(x, y, 25, 0, Math.PI * 2, false);
+      ctx.arc(x, y, 20, 0, 2 * Math.PI);
       ctx.fill();
     }
 
-    function checkScratch() {
+    function checkReveal() {
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let scratched = 0;
+      let cleared = 0;
       for (let i = 3; i < imageData.data.length; i += 4) {
-        if (imageData.data[i] === 0) scratched++;
+        if (imageData.data[i] === 0) cleared++;
       }
-      if (scratched / (canvas.width * canvas.height) > 0.4) {
-        canvas.style.display = "none";
-        popup.style.display = "block";
+      if (cleared / (canvas.width * canvas.height) > 0.4) {
+        canvas.style.display = 'none';
+        offerImg.style.display = 'block';
+        popup.style.display = 'block';
       }
     }
 
-    canvas.addEventListener("mousedown", e => {
+    canvas.addEventListener('mousedown', e => {
       isDrawing = true;
-      const pos = getPos(e);
-      draw(pos.x, pos.y);
+      const pos = getPosition(e);
+      erase(pos.x, pos.y);
     });
 
-    canvas.addEventListener("mousemove", e => {
-      if (isDrawing) {
-        const pos = getPos(e);
-        draw(pos.x, pos.y);
-      }
+    canvas.addEventListener('mousemove', e => {
+      if (!isDrawing) return;
+      const pos = getPosition(e);
+      erase(pos.x, pos.y);
     });
 
-    canvas.addEventListener("mouseup", () => {
+    canvas.addEventListener('mouseup', () => {
       isDrawing = false;
-      checkScratch();
+      checkReveal();
     });
 
-    canvas.addEventListener("touchstart", e => {
+    canvas.addEventListener('touchstart', e => {
       isDrawing = true;
-      const pos = getPos(e);
-      draw(pos.x, pos.y);
+      const pos = getPosition(e);
+      erase(pos.x, pos.y);
     });
 
-    canvas.addEventListener("touchmove", e => {
+    canvas.addEventListener('touchmove', e => {
+      if (!isDrawing) return;
       e.preventDefault();
-      if (isDrawing) {
-        const pos = getPos(e);
-        draw(pos.x, pos.y);
-      }
+      const pos = getPosition(e);
+      erase(pos.x, pos.y);
     });
 
-    canvas.addEventListener("touchend", () => {
+    canvas.addEventListener('touchend', () => {
       isDrawing = false;
-      checkScratch();
+      checkReveal();
     });
 
     function saveContact() {
