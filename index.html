@@ -3,28 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>King Healthcare Scratch Offer</title>
+  <title>🎁 King Healthcare Scratch Offer</title>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #000;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #1f1c2c, #928dab);
       color: #fff;
       text-align: center;
+    }
+    h2 {
+      font-size: 28px;
+      margin-top: 30px;
+      color: #FFD700;
     }
     .container {
       position: relative;
       max-width: 400px;
-      margin: 50px auto;
+      margin: 30px auto;
+      border: 3px solid #FFD700;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
     }
     canvas {
       position: absolute;
       top: 0;
       left: 0;
+      border-radius: 16px;
     }
     #offer-img {
       width: 100%;
-      border-radius: 12px;
+      border-radius: 16px;
       display: none;
     }
     #popup {
@@ -32,33 +42,51 @@
       background: #fff;
       color: #000;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 10px;
       position: fixed;
       top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
-      box-shadow: 0 0 10px #fff;
+      box-shadow: 0 0 20px #FFD700;
+      z-index: 999;
+    }
+    #popup h3 {
+      color: #28a745;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    #popup p {
+      font-size: 16px;
     }
     #popup button {
-      padding: 10px 20px;
-      background: green;
+      padding: 12px 24px;
+      background: #28a745;
       color: #fff;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 16px;
       margin-top: 10px;
+    }
+    .scratch-header {
+      font-size: 20px;
+      margin-top: 10px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <h2>🎉 स्क्रैच करके ऑफर देखें 🎉</h2>
+  <h2>🎁 स्क्रैच कीजिए और गिफ्ट पाइए!</h2>
+  <p class="scratch-header">कृपया स्क्रैच करें यह देखने के लिए कि आपने क्या जीता है</p>
   <div class="container">
-    <img id="offer-img" src="jeeet.png" alt="Offer Image"/>
+    <img id="offer-img" src="https://i.imgur.com/NUZ5N7X.png" alt="Offer Image"/>
     <canvas id="scratch" width="400" height="300"></canvas>
   </div>
+
   <div id="popup">
-    <p>टेक्नीशियन से संपर्क करने के लिए नीचे क्लिक करें:</p>
-    <button onclick="saveContact()">सेव करें और WhatsApp पर बात करें</button>
+    <h3>🎉 बधाई हो!</h3>
+    <p>आपने <strong>FREE Home Sample Collection</strong> जीत लिया है।</p>
+    <button onclick="saveContact()">सेव करें और WhatsApp पर संपर्क करें</button>
   </div>
 
   <script>
@@ -66,7 +94,6 @@
     const ctx = canvas.getContext('2d');
     const offerImg = document.getElementById('offer-img');
     const popup = document.getElementById('popup');
-
     let isDrawing = false;
 
     function getTouchPos(e) {
@@ -80,7 +107,7 @@
     function drawDot(x, y) {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.arc(x, y, 25, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -130,13 +157,12 @@
         offerImg.style.display = 'block';
         setTimeout(() => {
           popup.style.display = 'block';
-        }, 500);
+        }, 700);
       }
     }
 
     function saveContact() {
-      const vCardData = BEGIN:VCARD\nVERSION:3.0\nFN:King Healthcare Technician\nTEL;TYPE=CELL:6306215287\nEMAIL:kinghealthcare.ltd@gmail.com\nEND:VCARD;
-
+      const vCardData = `BEGIN:VCARD\\nVERSION:3.0\\nFN:King Healthcare Technician\\nTEL;TYPE=CELL:6306215287\\nEMAIL:kinghealthcare.ltd@gmail.com\\nEND:VCARD`;
       const blob = new Blob([vCardData], { type: 'text/vcard' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -150,7 +176,7 @@
     }
 
     window.onload = () => {
-      ctx.fillStyle = '#999';
+      ctx.fillStyle = "#888";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
   </script>
